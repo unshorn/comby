@@ -282,46 +282,46 @@ let%expect_test "list_languages" =
   let command = Format.sprintf "%s %s" binary_path command_args in
   let result = read_output command in
   print_string result;
-  [%expect_exact {|Option              Language  
- -matcher .s        Assembly  
- -matcher .sh       Bash      
- -matcher .c        C         
- -matcher .cs       C#        
- -matcher .css      CSS       
- -matcher .dart     Dart      
- -matcher .dyck     Dyck      
- -matcher .clj      Clojure   
- -matcher .elm      Elm       
- -matcher .erl      Erlang    
- -matcher .ex       Elixir    
- -matcher .f        Fortran   
- -matcher .fsx      F#        
- -matcher .go       Go        
- -matcher .html     HTML      
- -matcher .hs       Haskell   
- -matcher .java     Java      
+  [%expect_exact {|Option              Language
+ -matcher .s        Assembly
+ -matcher .sh       Bash
+ -matcher .c        C
+ -matcher .cs       C#
+ -matcher .css      CSS
+ -matcher .dart     Dart
+ -matcher .dyck     Dyck
+ -matcher .clj      Clojure
+ -matcher .elm      Elm
+ -matcher .erl      Erlang
+ -matcher .ex       Elixir
+ -matcher .f        Fortran
+ -matcher .fsx      F#
+ -matcher .go       Go
+ -matcher .html     HTML
+ -matcher .hs       Haskell
+ -matcher .java     Java
  -matcher .js       Javascript
- -matcher .json     JSON      
- -matcher .jl       Julia     
- -matcher .kt       Kotlin    
- -matcher .tex      LaTeX     
- -matcher .lisp     Lisp      
- -matcher .nim      Nim       
- -matcher .ml       OCaml     
- -matcher .paren    Paren     
- -matcher .pas      Pascal    
- -matcher .php      PHP       
- -matcher .py       Python    
- -matcher .re       Reason    
- -matcher .rb       Ruby      
- -matcher .rs       Rust      
- -matcher .scala    Scala     
- -matcher .sql      SQL       
- -matcher .swift    Swift     
- -matcher .txt      Text      
+ -matcher .json     JSON
+ -matcher .jl       Julia
+ -matcher .kt       Kotlin
+ -matcher .tex      LaTeX
+ -matcher .lisp     Lisp
+ -matcher .nim      Nim
+ -matcher .ml       OCaml
+ -matcher .paren    Paren
+ -matcher .pas      Pascal
+ -matcher .php      PHP
+ -matcher .py       Python
+ -matcher .re       Reason
+ -matcher .rb       Ruby
+ -matcher .rs       Rust
+ -matcher .scala    Scala
+ -matcher .sql      SQL
+ -matcher .swift    Swift
+ -matcher .txt      Text
  -matcher .ts       Typescript
- -matcher .xml      XML       
- -matcher .generic  Generic   
+ -matcher .xml      XML
+ -matcher .generic  Generic
 |}]
 
 
@@ -1105,3 +1105,21 @@ let%expect_test "warn_on_match_template_starts_with_everything_hole" =
   [%expect{|
     world
     WARNING: The match template starts with a :[hole]. You almost never want to start a template with :[hole], since it matches everything including newlines up to the part that comes after it. This can make things slow. :[[hole]] might be what you're looking for instead, like when you want to match an assignment foo = bar(args) on a line, use :[[var]] = bar(args). :[hole] is typically useful inside balanced delimiters. |}]
+
+let%expect_test "test_valid_toml" =
+  let source = "hello world\n" in
+  let match_template = ":[2] :[[1]]" in
+  let rewrite_template = ":[1]" in
+  let command_args =
+    Format.sprintf "-stdin -sequential '%s' '%s' -stdout -f .c " match_template rewrite_template
+  in
+  let command = Format.sprintf "%s %s" binary_path command_args in
+  let result = read_expect_stdin_and_stdout command source in
+  print_string result;
+  [%expect{|
+    world
+    WARNING: The match template starts with a :[hole]. You almost never want to start a template with :[hole], since it matches everything including newlines up to the part that comes after it. This can make things slow. :[[hole]] might be what you're looking for instead, like when you want to match an assignment foo = bar(args) on a line, use :[[var]] = bar(args). :[hole] is typically useful inside balanced delimiters. |}]
+
+let%expect_test "test_alphabetical_toml_application" = ()
+
+let%expect_test "test_toml_match_only" = ()

@@ -129,12 +129,14 @@ let parse_toml omega path =
       let rule = Table.find_opt (Toml.key "rule") t |> to_string |> create_rule omega in
       let rewrite_template = Table.find_opt (Toml.key "rewrite") t |> to_string in
       if debug then Format.printf "Processed ->%s<-@." match_template;
-      (Specification.create ~match_template ?rule ?rewrite_template ())::acc
+      (name, (Specification.create ~match_template ?rule ?rewrite_template ()))::acc
     | v ->
       Format.eprintf "Unexpected format, could not parse ->%s<-@." (Toml.Printer.string_of_value v);
       exit 1
   in
   TomlTypes.Table.fold to_specification toml []
+  |> List.sort ~compare:(fun x y -> String.compare (fst y) (fst x))
+  |> List.map ~f:snd
 
 let parse_templates ?(warn_for_missing_file_in_dir = false) omega paths =
   let parse_directory path =
