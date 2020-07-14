@@ -117,7 +117,7 @@ let%expect_test "error_on_invalid_templates_dir" =
   let command = Format.sprintf "%s %s" binary_path command_args in
   let result = read_expect_stdin_and_stdout command source in
   print_string result;
-  [%expect_exact {|One or more directories specified with -templates is not a directory.
+  [%expect_exact {|Directory "nonexistent" specified with -templates is not a directory.
 |}]
 
 let%expect_test "warn_on_anonymous_and_templates_flag" =
